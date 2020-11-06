@@ -15,6 +15,14 @@ document.querySelector('button').onclick = function() {
 document.querySelector('.image').onclick = function() {
   const imageSource = document.querySelector('.image img').src
 
-  favorites.push(imageSource);
+  const index = favorites.indexOf(imageSource);
+  const existsInLocalStorage = index != -1;
+
+  if(existsInLocalStorage) {
+    favorites.splice(index, 1);
+  } else {
+    favorites.push(imageSource);
+  }
+
   localStorage.setItem('favorites', JSON.stringify(favorites));
 }
