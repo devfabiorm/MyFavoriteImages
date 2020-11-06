@@ -13,6 +13,7 @@ document.querySelector('button').onclick = function() {
 }
 
 document.querySelector('.image').onclick = function() {
+  const imageContainer = document.querySelector('.image');
   const imageSource = document.querySelector('.image img').src
 
   const index = favorites.indexOf(imageSource);
@@ -20,8 +21,10 @@ document.querySelector('.image').onclick = function() {
 
   if(existsInLocalStorage) {
     favorites.splice(index, 1);
+    imageContainer.classList.remove('fav');
   } else {
     favorites.push(imageSource);
+    imageContainer.classList.add('fav');
   }
 
   localStorage.setItem('favorites', JSON.stringify(favorites));
