@@ -1,31 +1,54 @@
 let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+const imageContainer = document.querySelector('.image');
+const button = document.querySelector('button');
 
-async function getExternalImage() {
-  const response = await fetch('https://source.unsplash.com/random');
+button.onclick = () => updateImage();
+imageContainer.onclick = () => updateAll();
 
-  document.querySelector('.image').innerHTML= `<img src="${response.url}" />`;
+
+function updateAll() {
+
+  updateFavorites();
+  updateClasses();
 }
 
-getExternalImage();
-
-document.querySelector('button').onclick = function() {
-  getExternalImage();
-}
-
-document.querySelector('.image').onclick = function() {
-  const imageContainer = document.querySelector('.image');
+function getState() {
   const imageSource = document.querySelector('.image img').src
 
   const index = favorites.indexOf(imageSource);
   const existsInLocalStorage = index != -1;
 
-  if(existsInLocalStorage) {
-    favorites.splice(index, 1);
-    imageContainer.classList.remove('fav');
-  } else {
-    favorites.push(imageSource);
-    imageContainer.classList.add('fav');
-  }
+  return {imageSource, index, existsInLocalStorage};
+}
+
+function updateFavorites() {
+  const {existsInLocalStorage, index, imageSource} = getState();
+
+  existsInLocalStorage
+  ? favorites.splice(index, 1)
+  : favorites.push(imageSource)
 
   localStorage.setItem('favorites', JSON.stringify(favorites));
 }
+
+async function updateImage() {
+  await getExternalImage();
+  updateClasses();
+}
+
+function updateClasses() {
+  const { existsInLocalStorage } = getState();
+
+  imageContainer.classList.remove('fav');
+
+  if(existsInLocalStorage) {
+    imageContainer.classList.add('fav');
+  }
+}
+
+async function getExternalImage() {
+  const response = await fetch('https://source.unsplash.com/random');
+
+  imageContainer.innerHTML= `<img src="${response.url}" />`;
+}
+getExternalImage();
